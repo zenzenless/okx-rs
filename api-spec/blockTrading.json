@@ -1,0 +1,1334 @@
+{
+	"openapi": "3.0.1",
+	"info": {
+		"title": "REST API",
+		"version": "1.0",
+		"description": "# 使用说明 \n <b>该功能接口用户需先登陆，接口只会请求模拟环境</b><br><br>*Parameters* 面板中点击`Try it out`按钮，编辑请求参数，点击`Execute`按钮发送请求。*Responses* 面板中查看请求结果。<br>"
+	},
+	"tags": [{
+		"name": "大宗交易"
+	}],
+	"paths": {
+		"/api/v5/rfq/counterparties": {
+			"get": {
+				"tags": [
+					"大宗交易"
+				],
+				"summary": "获取报价方信息",
+				"required": true,
+				"responses": {
+					"200": {
+						"description": "成功",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"additionalProperties": {
+										"type": "object",
+										"properties": {}
+									},
+									"example": {
+										"code": "0",
+										"msg": "",
+										"data": [{
+											"traderName": "Satoshi Nakamoto",
+											"traderCode": "SATOSHI",
+											"type": ""
+										}]
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"/api/v5/rfq/create-rfq": {
+			"post": {
+				"tags": [
+					"大宗交易"
+				],
+				"summary": "询价",
+				"requestBody": {
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object",
+								"required": [
+									"counterparties",
+									"legs"
+								],
+								"properties": {
+									"counterparties": {
+										"type": "array",
+										"description": "报价方列表。"
+									},
+									"anonymous": {
+										"type": "boolean",
+										"description": "是否匿名询价，true表示匿名询价，false表示公开询价，默认值为 false，为true时，即使在交易执行之后，身份也不会透露给报价方。"
+									},
+									"clRfqId": {
+										"type": "string",
+										"description": "询价单自定义ID，字母（区分大小写）与数字的组合，可以是纯字母、纯数字且长度要在1-32位之间。"
+									},
+									"allowPartialExecution": {
+										"type": "boolean",
+										"description": "RFQ是否可以被部分执行，如果腿的比例和原RFQ一致。有效值为true或false。默认为false。"
+									},
+									"legs": {
+										"type": "array",
+										"description": "组合交易，每次最多可以提交15组交易信息"
+									}
+								}
+							},
+							"examples": {
+								"1": {
+									"summary": "询价",
+									"value": {
+										"anonymous": true,
+										"counterparties": [
+											"Trader1",
+											"Trader2"
+										],
+										"clRfqId": "rfq01",
+										"legs": [{
+												"sz": "25",
+												"side": "buy",
+												"instId": "BTCUSD-221208-100000-C"
+											},
+											{
+												"sz": "150",
+												"side": "buy",
+												"instId": "ETH-USDT",
+												"tgtCcy": "base_ccy"
+											}
+										]
+									}
+								}
+							}
+						}
+					},
+					"required": true
+				},
+				"responses": {
+					"200": {
+						"description": "成功",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"additionalProperties": {
+										"type": "object",
+										"properties": {}
+									},
+									"example": {
+										"code": "0",
+										"msg": "",
+										"data": [{
+											"cTime": "1611033737572",
+											"uTime": "1611033737572",
+											"traderCode": "SATOSHI",
+											"rfqId": "22534",
+											"clRfqId": "rfq01",
+											"allowPartialExecution": false,
+											"state": "active",
+											"validUntil": "1611033857557",
+											"counterparties": [
+												"Trader1",
+												"Trader2"
+											],
+											"legs": [{
+													"instId": "BTCUSD-221208-100000-C",
+													"sz": "25",
+													"side": "buy",
+													"tgtCcy": ""
+												},
+												{
+													"instId": "ETH-USDT",
+													"sz": "150",
+													"side": "buy",
+													"tgtCcy": "base_ccy"
+												}
+											]
+										}]
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"/api/v5/rfq/cancel-rfq": {
+			"post": {
+				"tags": [
+					"大宗交易"
+				],
+				"summary": "取消询价",
+				"requestBody": {
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object",
+								"properties": {
+									"clRfqId": {
+										"type": "string",
+										"description": "可选<br>询价单ID"
+									},
+									"rfqId": {
+										"type": "string",
+										"description": "可选<br>询价单自定义ID，字母（区分大小写）与数字的组合，可以是纯字母、纯数字且长度要在1-32位之间。当 clRfqId 和 rfqId 都传时，以 rfqId 为准。"
+									}
+								}
+							},
+							"examples": {
+								"1": {
+									"summary": "取消询价",
+									"value": {
+										"rfqId": "22535",
+										"clRfqId": "rfq001"
+									}
+
+								}
+							}
+						}
+					}
+				},
+				"required": true,
+				"responses": {
+					"200": {
+						"description": "成功",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"additionalProperties": {
+										"type": "object",
+										"properties": {}
+									},
+									"example": {
+										"code": "0",
+										"msg": "",
+										"data": [{
+											"rfqId": "22535",
+											"clRfqId": "rfq001",
+											"sCode": "0",
+											"sMsg": ""
+										}]
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"/api/v5/rfq/cancel-batch-rfqs": {
+			"post": {
+				"tags": [
+					"大宗交易"
+				],
+				"summary": "批量取消询价",
+				"requestBody": {
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object",
+								"required": [
+									"rfqIds",
+									"clRfqIds"
+								],
+								"properties": {
+									"rfqIds": {
+										"type": "array",
+										"description": "可选<br>询价单ID"
+									},
+									"clRfqIds": {
+										"type": "array",
+										"description": "可选<br>用户自定义询价单ID列表. "
+									}
+								}
+							},
+							"examples": {
+								"1": {
+									"summary": "批量取消询价",
+									"value": {
+										"rfqIds": [
+											"2201",
+											"2202",
+											"2203"
+										],
+										"clRfqIds": [
+											"r1",
+											"r2",
+											"r3"
+										]
+									}
+								}
+							}
+						}
+					}
+				},
+				"required": true,
+				"responses": {
+					"200": {
+						"description": "成功",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"additionalProperties": {
+										"type": "object",
+										"properties": {}
+									},
+									"example": {
+										"code": "0",
+										"msg": "",
+										"data": [{
+												"rfqId": "2201",
+												"clRfqId": "r1",
+												"sCode": "0",
+												"sMsg": ""
+											},
+											{
+												"rfqId": "2202",
+												"clRfqId": "r2",
+												"sCode": "0",
+												"sMsg": ""
+											},
+											{
+												"rfqId": "2203",
+												"clRfqId": "r3",
+												"sCode": "0",
+												"sMsg": ""
+											}
+										]
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"/api/v5/rfq/cancel-all-rfqs": {
+			"post": {
+				"tags": [
+					"大宗交易"
+				],
+				"summary": "取消所有询价",
+				"responses": {
+					"200": {
+						"description": "成功",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"additionalProperties": {
+										"type": "object",
+										"properties": {}
+									},
+									"example": {
+										"code": "0",
+										"msg": "",
+										"data": [{
+											"ts": "1697026383085"
+										}]
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"/api/v5/rfq/execute-quote": {
+			"post": {
+				"tags": [
+					"大宗交易"
+				],
+				"summary": "执行报价",
+				"requestBody": {
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object",
+								"required": [
+									"rfqId",
+									"quoteId"
+								],
+								"properties": {
+									"rfqId": {
+										"type": "string",
+										"description": "询价单ID. "
+									},
+									"quoteId": {
+										"type": "string",
+										"description": "报价单ID."
+									},
+									"legs": {
+										"type": "array of objects",
+										"description": "用于部分执行的腿的数量。腿的数量比例必须与原RFQ相同。注意：每条腿的tgtCcy和side和原RFQ一致，px和对应Quote一致。"
+									}
+								}
+							},
+							"examples": {
+								"1": {
+									"summary": "执行报价请求示例",
+									"value": {
+										"rfqId":"22540",
+										"quoteId":"84073",
+										"legs":[
+										{
+											"sz":"25",
+											"instId":"BTC-USD-20220114-13250-C"
+										},
+										{
+											"sz":"25",
+											"instId":"BTC-USDT"
+										}
+										]
+									}
+								}
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "成功",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"example": {
+
+										"code": "0",
+										"msg": "",
+										"data": [{
+											"blockTdId": "180184",
+											"rfqId": "1419",
+											"clRfqId": "r0001",
+											"quoteId": "1046",
+											"clQuoteId": "q0001",
+											"tTraderCode": "Trader1",
+											"mTraderCode": "Trader2",
+											"cTime": "1649670009",
+											"legs": [{
+													"px": "43000",
+													"sz": "25",
+													"instId": "BTC-USD-20220114-13250-C",
+													"side": "sell",
+													"fee": "-1.001",
+													"feeCcy": "BTC",
+													"tradeId": "10211"
+												},
+												{
+													"px": "42800",
+													"sz": "25",
+													"instId": "BTC-USDT",
+													"side": "buy",
+													"fee": "-1.001",
+													"feeCcy": "BTC",
+													"tradeId": "10212"
+												}
+											]
+										}]
+									}
+
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"/api/v5/rfq/maker-instrument-settings": {
+			"post": {
+				"tags": [
+					"大宗交易"
+				],
+				"summary": "设置可报价产品",
+				"requestBody": {
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object",
+								"required": [
+									"instType",
+									"data"
+								],
+								"properties": {
+									"instType": {
+										"type": "string",
+										"description": "产品类别，枚举值包括 FUTURES, OPTION, SWAP 和 SPOT。"
+									},
+									"includeAll": {
+										"type": "boolean",
+										"description": "是否接收该instType下所有产品。有效值为true或false。默认false。"
+									},
+									"data": {
+										"type": "array of objects",
+										"description": "instType的元素"
+									}
+								}
+							},
+							"example": [
+								{
+								"instType": "OPTION",
+								"data":
+									[{    
+										"instFamily": "BTC-USD",
+										"maxBlockSz": "10000",
+										"makerPxBand": "5"
+									},
+									{
+										"instFamily": "SOL-USD",
+										"maxBlockSz": "100000",
+										"makerPxBand": "15"
+									}]
+								},
+								{
+								"instType": "FUTURES",
+								"data":
+									[{
+										"instFamily": "BTC-USD",
+										"maxBlockSz": "10000",
+										"makerPxBand": "5"
+									},
+									{
+										"instFamily": "ETH-USDT",
+										"maxBlockSz": "100000",
+										"makerPxBand": "15"
+									}]
+								},
+								{
+								"instType": "SWAP",
+								"data":
+									[{
+										"instFamily": "BTC-USD",
+										"maxBlockSz": "10000",
+										"makerPxBand": "5"
+									},
+									{
+										"instFamily": "ETH-USDT"
+									}]
+								},
+								{
+								"instType": "SPOT",
+								"data":
+									[{
+										"instId": "BTC-USDT"
+									},
+									{
+										"instId": "TRX-USDT"
+									}]
+								}
+							]
+						}
+					} 
+				},
+				"responses": {
+					"200": {
+						"description": "成功",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"example": {
+
+										"code": "0",
+										"msg": "",
+										"data": [{
+											"result": true
+										}]
+									}
+
+								}
+							}
+						}
+					}
+				}
+			}
+		},	
+		"/api/v5/rfq/mmp-reset": {
+			"post": {
+				"tags": [
+					"大宗交易"
+				],
+				"summary": "重设MMP状态",
+				"responses": {
+					"200": {
+						"description": "成功",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"additionalProperties": {
+										"type": "object",
+										"properties": {}
+									},
+									"example": {
+										"code": "0",
+										"msg": "",
+										"data": [{
+											"ts":"1597026383085"
+										}]
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+
+		"/api/v5/rfq/create-quote": {
+			"post": {
+				"tags": [
+					"大宗交易"
+				],
+				"summary": "报价",
+				"requestBody": {
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object",
+								"required": [
+									"rfqId",
+									"quoteSide",
+									"legs"
+								],
+								"properties": {
+									"rfqId": {
+										"type": "array",
+										"description": "询价单ID."
+									},
+									"clQuoteId": {
+										"type": "boolean",
+										"description": "报价单自定义ID"
+									},
+									"quoteSide": {
+										"type": "string",
+										"description": "询价单方向， buy 或者 sell"
+									},
+									"legs": {
+										"type": "array",
+										"description": "组合交易 "
+									}
+								}
+							},
+							"examples": {
+								"1": {
+									"summary": "报价请求示例",
+									"value": {
+										"rfqId": "22539",
+										"clQuoteId": "q001",
+										"quoteSide": "buy",
+										"legs": [{
+											"px": "39450.0",
+											"sz": "200000",
+											"instId": "BTC-USDT-SWAP",
+											"side": "buy"
+										}]
+									}
+								}
+							}
+						}
+					},
+					"required": true
+				},
+				"responses": {
+					"200": {
+						"description": "成功",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"additionalProperties": {
+										"type": "object",
+										"properties": {}
+									},
+									"example": {
+										"code": "0",
+										"msg": "",
+										"data": [{
+											"cTime": "1611038342698",
+											"uTime": "1611038342698",
+											"quoteId": "84069",
+											"clQuoteId": "q002",
+											"rfqId": "22537",
+											"quoteSide": "buy",
+											"state": "active",
+											"validUntil": "1611038442838",
+											"legs": [{
+												"px": "39450.0",
+												"sz": "200000",
+												"instId": "BTC-USDT-SWAP",
+												"side": "buy",
+												"tgtCcy": ""
+											}]
+										}]
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"/api/v5/rfq/cancel-quote": {
+			"post": {
+				"tags": [
+					"大宗交易"
+				],
+				"summary": "取消报价",
+				"requestBody": {
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object",
+								"required": [
+									"quoteId",
+									"clQuoteId"
+								],
+								"properties": {		
+									"quoteId": {
+										"type": "string",
+										"description": "可选<br>报价单ID."
+									},
+									"clQuoteId": {
+										"type": "string",
+										"description": "可选<br>用户自定义报价单ID.. "
+									}
+								}
+							},
+							"examples": {
+								"1": {
+									"summary": "取消报价请求示例",
+									"value": {
+										"quoteId": "007",
+										"clQuoteId": "Bond007"
+									}
+								}
+							}
+						}
+					}
+				},
+				"required": true,
+				"responses": {
+					"200": {
+						"description": "成功",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"additionalProperties": {
+										"type": "object",
+										"properties": {}
+									},
+									"example": {
+										"code": "0",
+										"msg": "",
+										"data": [{
+											"quoteId": "007",
+											"clQuoteId": "Bond007",
+											"sCode": "0",
+											"sMsg": ""
+										}]
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"/api/v5/rfq/cancel-batch-quotes": {
+			"post": {
+				"tags": [
+					"大宗交易"
+				],
+				"summary": "批量取消报价",
+				"requestBody": {
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object",
+								"required": [
+									"quoteIds",
+									"clQuoteIds"
+								],
+								"properties": {
+									"clQuoteIds": {
+										"type": "array",
+										"description": "可选<br>用户自定义报价单ID列表"
+									},
+									"quoteIds": {
+										"type": "array",
+										"description": "可选<br>报价单ID列表"
+									}
+								}
+							},
+							"examples": {
+								"1": {
+									"summary": "批量取消报价示例",
+									"value": {
+										"quoteIds": ["1150", "1151", "1152"],
+										"clQuoteIds": ["q1", "q2", "q3"]
+									}
+								}
+							}
+						}
+					}
+				},
+				"required": true,
+				"responses": {
+					"200": {
+						"description": "成功",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"additionalProperties": {
+										"type": "object",
+										"properties": {}
+									},
+									"example": {
+										"code": "0",
+										"msg": "",
+										"data": [{
+												"quoteId": "1150",
+												"clQuoteId": "q1",
+												"sCode": "0",
+												"sMsg": ""
+											},
+											{
+												"quoteId": "1151",
+												"clQuoteId": "q2",
+												"sCode": "0",
+												"sMsg": ""
+											},
+											{
+												"quoteId": "1152",
+												"clQuoteId": "q3",
+												"sCode": "0",
+												"sMsg": ""
+											}
+										]
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"/api/v5/rfq/cancel-all-quotes": {
+			"post": {
+				"tags": [
+					"大宗交易"
+				],
+				"summary": "取消所有报价",
+				"responses": {
+					"200": {
+						"description": "成功",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"additionalProperties": {
+										"type": "object",
+										"properties": {}
+									},
+									"example": {
+										"code": "0",
+										"msg": "",
+										"data": [{
+											"ts": "1697026383085"
+										}]
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"/api/v5/rfq/rfqs": {
+			"get": {
+				"tags": [
+					"大宗交易"
+				],
+				"summary": "获取询价单信息",
+				"parameters": [{
+						"name": "rfqId",
+						"in": "query",
+						"description": "询价单ID",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "clRfqId",
+						"in": "query",
+						"description": "客户询价单自定义ID，当 clRfqId 和 rfqId 都传时，以 rfqId 为准",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "state",
+						"in": "query",
+						"description": "询价单的状态，`active``canceled``pending_fill``filled``expired``traded_away``failed``traded_away`。`traded_away` 仅适用于报价方",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "beginId",
+						"in": "query",
+						"description": "请求的起始询价单ID，请求此ID之后（更新的数据）的分页内容，不包括 beginId",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "endId",
+						"in": "query",
+						"description": "请求的结束询价单ID，请求此ID之前（更旧的数据）的分页内容，不包括 endId",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "limit",
+						"in": "query",
+						"description": "返回结果的数量，默认100条",
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "成功",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"example": {
+										"code": "0",
+										"msg": "",
+										"data": [{
+												"rfqId": "123456",
+												"clRfqId": "",
+												"traderCode": "VITALIK",
+												"validUntil": "1650969031817",
+												"state": "filled",
+												"counterparties": [
+													"SATOSHI"
+												],
+												"legs": [{
+													"instId": "BTC-USDT",
+													"side": "buy",
+													"sz": "25",
+													"tgtCcy": "base_ccy"
+												}],
+												"cTime": "1650968131817",
+												"uTime": "1650968164944"
+											},
+											{
+												"rfqId": "1234567",
+												"clRfqId": "",
+												"traderCode": "VITALIK",
+												"validUntil": "1650967623729",
+												"state": "filled",
+												"counterparties": [
+													"SATOSHI"
+												],
+												"legs": [{
+													"instId": "BTC-USDT",
+													"side": "buy",
+													"sz": "1500000",
+													"tgtCcy": "quote_ccy"
+												}],
+												"cTime": "1650966723729",
+												"uTime": "1650966816577"
+											}
+										]
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"/api/v5/rfq/quotes": {
+			"get": {
+				"tags": [
+					"大宗交易"
+				],
+				"summary": "获取报价单信息",
+				"parameters": [{
+						"name": "rfqId",
+						"in": "query",
+						"description": "询价单ID",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "clRfqId",
+						"in": "query",
+						"description": "询价单自定义ID， 当 clRfqId 和 rfqId 都传时，以 rfqId 为准。",
+						"schema": {
+							"type": "string"
+						}
+					},					
+					{
+						"name": "clQuoteId",
+						"in": "query",
+						"description": "报价单自定义ID，当 clRfqId 和 rfqId 都传时，以 rfqId 为准。",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "quoteId",
+						"in": "query",
+						"description": "报价单ID",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "state",
+						"in": "query",
+						"description": "报价单的状态，`active` `canceled` `pending_fill` `filled` `expired` `failed`",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "beginId",
+						"in": "query",
+						"description": "请求的起始报价单ID，请求此ID之后（更新的数据）的分页内容，不包括 beginId",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "endId",
+						"in": "query",
+						"description": "请求的结束报价单ID，请求此ID之前（更旧的数据）的分页内容，不包括 endId",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "limit",
+						"in": "query",
+						"description": "返回结果的数量，默认100条",
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "成功",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"example": {
+										"code": "0",
+										"msg": "",
+										"data": [{
+											"validUntil": "1608997227834",
+											"uTime": "1608267227834",
+											"cTime": "1608267227834",
+											"legs": [{
+													"px": "46000",
+													"sz": "25",
+													"instId": "BTC-USD-220114-25000-C",
+													"side": "sell",
+													"tgtCcy": ""
+												},
+												{
+													"px": "45000",
+													"sz": "25",
+													"instId": "BTC-USDT",
+													"side": "buy",
+													"tgtCcy": "base_ccy"
+												}
+											],
+											"quoteId": "25092",
+											"rfqId": "18753",
+											"quoteSide": "sell",
+											"state": "canceled",
+											"clQuoteId": "cq001",
+											"clRfqId": "cr001",
+											"traderCode": "Trader1"
+										}]
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"/api/v5/rfq/trades": {
+			"get": {
+				"tags": [
+					"大宗交易"
+				],
+				"summary": "获取大宗交易信息",
+				"parameters": [{
+						"name": "rfqId",
+						"in": "query",
+						"description": "询价单ID",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "clRfqId",
+						"in": "query",
+						"description": "由用户设置的 RFQ ID. 如果 clRfqId 和 rfqId 都传， 以rfqId 为准",
+						"schema": {
+							"type": "string"
+						}
+					},					
+					{
+						"name": "blockTdId",
+						"in": "query",
+						"description": "大宗交易ID",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "clQuoteId",
+						"in": "query",
+						"description": "由用户设置的 Quote ID。如果clQuoteId 和 quoteId 都传，则 以 quoteId 为准",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "quoteId",
+						"in": "query",
+						"description": "报价单ID",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "state",
+						"in": "query",
+						"description": "询价单的状态，active canceled pending_fill filled expired traded_away failed traded_away。traded_away 仅适用于报价方",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "beginId",
+						"in": "query",
+						"description": "请求的起始大宗交易ID，请求此ID之后（更新的数据）的分页内容，不包括 beginId",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "endId",
+						"in": "query",
+						"description": "请求的结束大宗交易ID，请求此ID之前（更旧的数据）的分页内容，不包括 endId",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "limit",
+						"in": "query",
+						"description": "返回结果的数量，默认100条。",
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "成功",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"example": {
+										"code": "0",
+										"msg": "",
+										"data": [{
+												"rfqId": "123456",
+												"clRfqId": "",
+												"quoteId": "0T5342O",
+												"clQuoteId": "",
+												"blockTdId": "439127542058958848",
+												"legs": [{
+													"instId": "BTC-USDT",
+													"side": "sell",
+													"sz": "0.666",
+													"px": "100",
+													"tradeId": "439127542058958850",
+													"fee": "-0.0333",
+													"feeCcy": "USDT",
+													"tgtCcy": "base_ccy"
+												}],
+												"cTime": "1650968164900",
+												"tTraderCode": "SATS",
+												"mTraderCode": "MIKE"
+											},
+											{
+												"rfqId": "1234567",
+												"clRfqId": "",
+												"quoteId": "0T533T0",
+												"clQuoteId": "",
+												"blockTdId": "439121886014849024",
+												"legs": [{
+													"instId": "BTC-USDT",
+													"side": "sell",
+													"sz": "0.532",
+													"px": "100",
+													"tradeId": "439121886014849026",
+													"fee": "-0.0266",
+													"feeCcy": "USDT",
+													"tgtCcy": "base_ccy"
+												}],
+												"cTime": "1650966816550",
+												"tTraderCode": "SATS",
+												"mTraderCode": "MIKE"
+											}
+										]
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"/api/v5/rfq/public-trades": {
+			"get": {
+				"tags": [
+					"大宗交易"
+				],
+				"summary": "获取大宗交易公共成交数据",
+				"parameters": [{
+						"name": "beginId",
+						"in": "query",
+						"description": "请求的起始大宗交易ID，请求此ID之后（更新的数据）的分页内容，不包括 beginId",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "endId",
+						"in": "query",
+						"description": "请求的结束大宗交易ID，请求此ID之前（更旧的数据）的分页内容，不包括 endId",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "limit",
+						"in": "query",
+						"description": "返回结果的数量，默认100条。",
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "成功",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"example": {
+										"code": "0",
+										"msg": "",
+										"data": [{
+											"blockTdId": "439161457415012352",
+											"legs": [{
+													"instId": "BTC-USD-210826",
+													"side": "sell",
+													"sz": "100",
+													"px": "11000",
+													"tradeId": "439161457415012354"
+												},
+												{
+													"instId": "BTC-USD-SWAP",
+													"side": "sell",
+													"sz": "100",
+													"px": "50",
+													"tradeId": "439161457415012355"
+												},
+												{
+													"instId": "BTC-USDT",
+													"side": "buy",
+													"sz": "0.1",
+													"px": "10.1",
+													"tradeId": "439161457415012356"
+												},
+												{
+													"instId": "BTC-USD-210326-60000-C",
+													"side": "buy",
+													"sz": "200",
+													"px": "0.008",
+													"tradeId": "439161457415012357"
+												},
+												{
+													"instId": "BTC-USD-220930-5000-P",
+													"side": "sell",
+													"sz": "200",
+													"px": "0.008",
+													"tradeId": "439161457415012360"
+												},
+												{
+													"instId": "BTC-USD-220930-10000-C",
+													"side": "sell",
+													"sz": "200",
+													"px": "0.008",
+													"tradeId": "439161457415012361"
+												},
+												{
+													"instId": "BTC-USD-220930-10000-P",
+													"side": "sell",
+													"sz": "200",
+													"px": "0.008",
+													"tradeId": "439161457415012362"
+												},
+												{
+													"instId": "ETH-USD-220624-100100-C",
+													"side": "sell",
+													"sz": "100",
+													"px": "0.008",
+													"tradeId": "439161457415012363"
+												}
+											],
+											"cTime": "1650976251241"
+										}]
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	},
+	"components": {}
+}

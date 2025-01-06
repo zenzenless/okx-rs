@@ -1,0 +1,378 @@
+{
+    "openapi": "3.0.1",
+    "info": {
+        "title": "REST API",
+        "version": "v5",
+        "description": "# 使用说明 \n <b>该功能接口用户需先登陆，接口只会请求模拟环境</b><br><br>*Parameters* 面板中点击`Try it out`按钮，编辑请求参数，点击`Execute`按钮发送请求。*Responses* 面板中查看请求结果。<br>"
+    },
+    "tags": [
+        {
+            "name": "Fundings",
+            "description": "资金"
+        }
+    ],
+    "paths": {
+        "/api/v5/asset/currencies": {
+            "get": {
+                "tags": [
+                    "Fundings"
+                ],
+                "summary": "获取币种列表",
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "example": {
+                                        "code": "0",
+                                        "msg": "",
+                                        "data": [
+                                            {
+                                                "ccy": "BTC",
+                                                "chain": "",
+                                                "name": "",
+                                                "canDep": true,
+                                                "canWd": true,
+                                                "canInternal": true,
+                                                "minWd": "0.01",
+                                                "maxFee": "0.02",
+                                                "minFee": "0.0005"
+                                            }
+                                        ]
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v5/asset/balances": {
+            "get": {
+                "tags": [
+                    "Fundings"
+                ],
+                "summary": "获取资金账户余额",
+                "parameters": [
+                    {
+                        "name": "ccy",
+                        "in": "query",
+                        "description": "币种,支持多币种查询（不超过20个），币种之间半角逗号分隔",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "example": {
+                                        "code": "0",
+                                        "msg": "",
+                                        "data": [
+                                            {
+                                                "availBal": "37.11827078",
+                                                "bal": "37.11827078",
+                                                "ccy": "ETH",
+                                                "frozenBal": "0"
+                                            }
+                                        ]
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v5/asset/asset-valuation": {
+            "get": {
+                "tags": [
+                    "Fundings"
+                ],
+                "summary": "获取账户资产估值",
+                "parameters": [
+                    {
+                        "name": "ccy",
+                        "in": "query",
+                        "description": "资产估值对应的单位<br>BTC 、USDT、USD 、CNY 、JPY、KRW、RUB、EUR、VND 、IDR 、INR、PHP、THB、TRY、AUD 、SGD 、ARS、SAR、AED、IQD<br>默认以`BTC`为单位的估值",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "example": {
+                                        "code": "0",
+                                        "data": [
+                                            {
+                                                "details": {
+                                                    "classic": "124.6",
+                                                    "earn": "1122.73",
+                                                    "funding": "0.09",
+                                                    "trading": "2544.28"
+                                                },
+                                                "totalBal": "3790.09",
+                                                "ts": "1637566660769"
+                                            }
+                                        ],
+                                        "msg": ""
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v5/asset/transfer": {
+            "post": {
+                "tags": [
+                    "Fundings"
+                ],
+                "summary": "资金划转",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "required": [
+                                    "ccy",
+                                    "amt",
+                                    "from",
+                                    "to"
+                                ],
+                                "properties": {
+                                    "ccy": {
+                                        "type": "string",
+                                        "description": "必填<br>币种，如 `USDT`"
+                                    },
+                                    "amt": {
+                                        "type": "string",
+                                        "description": "必填<br>划转数量"
+                                    },
+                                    "from": {
+                                        "type": "string",
+                                        "description": "必填<br>转出账户<br>`6`: 资金账户, `18`: 交易账户"
+                                    },
+                                    "to": {
+                                        "type": "string",
+                                        "description": "必填<br>转入账户<br>`6`: 资金账户, `18`: 交易账户"
+                                    },
+                                    "subAcct": {
+                                        "type": "string",
+                                        "description": "可选<br>子账户名称，`type`为1或2：`subAcct` 为必填项"
+                                    },
+                                    "type": {
+                                        "type": "string",
+                                        "description": "划转类型<br>`0`: 账户内划转<br>`1`: 母账户转子账户(仅适用于母账户APIKey)<br>`2`: 子账户转母账户(仅适用于母账户APIKey)<br>默认为`0`"
+                                    },
+                                    "loanTrans": {
+                                        "type": "boolean",
+                                        "description": "是否支持跨币种保证金模式或组合保证金模式下的借币转入/转出<br>`true`或`false`，默认`false`"
+                                    }
+                                }
+                            },
+                            "examples": {
+                                "1": {
+                                    "summary": "母账户USDT从资金账户划转1.5USDT到交易账户",
+                                    "value": {
+                                        "ccy": "USDT",
+                                        "amt": "1.5",
+                                        "from": "6",
+                                        "to": "18"
+                                    }
+                                },
+                                "2": {
+                                    "summary": "母账户从资金账户划转1.5USDT到子账户的交易账户",
+                                    "value": {
+                                        "ccy": "USDT",
+                                        "type": "1",
+                                        "amt": "1.5",
+                                        "from": "6",
+                                        "to": "6",
+                                        "subAcct": "mini"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "additionalProperties": {
+                                        "type": "object",
+                                        "properties": {}
+                                    },
+                                    "example": {
+                                        "code": "0",
+                                        "msg": "",
+                                        "data": [
+                                            {
+                                                "transId": "754147",
+                                                "ccy": "USDT",
+                                                "from": "6",
+                                                "amt": "0.1",
+                                                "to": "18"
+                                            }
+                                        ]
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v5/asset/transfer-state": {
+            "get": {
+                "tags": [
+                    "Fundings"
+                ],
+                "summary": "获取资金划转状态",
+                "parameters": [
+                    {
+                        "name": "transId",
+                        "in": "query",
+                        "description": "划转ID",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+                    },
+                    {
+                        "name": "type",
+                        "in": "query",
+                        "description": "划转类型<br>`0`: 账户内划转<br>`1`: 母账户转子账户<br>`2`: 子账户转母账户<br>默认为`0`",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "example": {
+                                        "code": "0",
+                                        "data": [
+                                            {
+                                                "amt": "1.5",
+                                                "ccy": "USDT",
+                                                "from": "18",
+                                                "instId": "",
+                                                "state": "success",
+                                                "subAcct": "test",
+                                                "to": "6",
+                                                "toInstId": "",
+                                                "transId": "1",
+                                                "type": "1"
+                                            }
+                                        ],
+                                        "msg": ""
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v5/asset/bills": {
+            "get": {
+                "tags": [
+                    "Fundings"
+                ],
+                "summary": "获取资金流水",
+                "parameters": [
+                    {
+                        "name": "ccy",
+                        "in": "query",
+                        "description": "币种，如 `BTC`",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "type",
+                        "in": "query",
+                        "description": "账单类型",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "after",
+                        "in": "query",
+                        "description": "查询在此之前的内容，值为时间戳，Unix 时间戳为毫秒数格式，如 `1597026383085`",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "before",
+                        "in": "query",
+                        "description": "查询在此之后的内容，值为时间戳，Unix 时间戳为毫秒数格式，如 `1597026383085`",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "limit",
+                        "in": "query",
+                        "description": "分页返回的结果集数量，最大为100，不填默认返回100条",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "example": {
+                                        "code": "0",
+                                        "msg": "",
+                                        "data": [{
+                                            "billId": "12344",
+                                            "ccy": "BTC",
+                                            "balChg": "2",
+                                            "bal": "12",
+                                            "type": "1",
+                                            "ts": "1597026383085"
+                                        }]
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "components": {}
+}

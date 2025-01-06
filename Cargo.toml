@@ -1,0 +1,11 @@
+[workspace]
+
+members = [
+    "account",
+    "block_trading",
+    "fundings",
+    "market",
+    "public",
+    "trade",
+    "trading_data",
+]

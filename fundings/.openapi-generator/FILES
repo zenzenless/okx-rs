@@ -1,0 +1,14 @@
+.gitignore
+.openapi-generator-ignore
+.travis.yml
+Cargo.toml
+README.md
+docs/ApiV5AssetTransferPostRequest.md
+docs/FundingsApi.md
+git_push.sh
+src/apis/configuration.rs
+src/apis/fundings_api.rs
+src/apis/mod.rs
+src/lib.rs
+src/models/_api_v5_asset_transfer_post_request.rs
+src/models/mod.rs

@@ -1,0 +1,634 @@
+{
+    "openapi": "3.0.1",
+    "info": {
+        "title": "REST API",
+        "version": "1.0",
+        "description": "# 使用说明 \n <b>接口只会请求模拟环境</b><br><br>*Parameters* 面板中点击`Try it out`按钮，编辑请求参数，点击`Execute`按钮发送请求。*Responses* 面板中查看请求结果。<br>"
+    },
+    "tags": [
+        {
+            "name": "Trading Data",
+            "description": "交易大数据"
+        }
+    ],
+    "paths": {
+        "/api/v5/rubik/stat/trading-data/support-coin": {
+            "get": {
+                "tags": [
+                    "Trading Data"
+                ],
+                "summary": "获取交易大数据数据支持币种",
+                "description": "",
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "example": {
+                                        "code": "0",
+                                        "data": {
+                                            "contract": [
+                                                "ADA",
+                                                "BTC"
+                                            ],
+                                            "option": [
+                                                "BTC"
+                                            ],
+                                            "spot": [
+                                                "ADA",
+                                                "BTC"
+                                            ]
+                                        },
+                                        "msg": ""
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v5/rubik/stat/taker-volume": {
+            "get": {
+                "tags": [
+                    "Trading Data"
+                ],
+                "summary": "获取币币或衍生品主动买入/卖出情况",
+                "parameters": [
+                    {
+                        "name": "ccy",
+                        "in": "query",
+                        "description": "币种，如：`BTC`",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "BTC"
+                    },
+                    {
+                        "name": "instType",
+                        "in": "query",
+                        "description": "产品类型<br>币币：`SPOT`, 衍生品：`CONTRACTS`",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true,
+                        "example": "SPOT"
+                    },
+                    {
+                        "name": "begin",
+                        "in": "query",
+                        "description": "开始时间，例如：1597026383085",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "end",
+                        "in": "query",
+                        "description": "结束时间，例如：1597026383085",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "period",
+                        "in": "query",
+                        "description": "时间粒度，默认值`5m`。支持[5m/1H/1D]<br>`5m`粒度最多只能查询两天之内的数据<br>`1H`粒度最多只能查询30天之内的数据<br>`1D`粒度最多只能查询180天之内的数据",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "example": {
+                                        "code": "0",
+                                        "data": [
+                                            [
+                                                "1630425600000",
+                                                "7596.2651",
+                                                "7149.4855"
+                                            ],
+                                            [
+                                                "1630339200000",
+                                                "5312.7876",
+                                                "7002.7541"
+                                            ]
+                                        ],
+                                        "msg": ""
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v5/rubik/stat/margin/loan-ratio": {
+            "get": {
+                "tags": [
+                    "Trading Data"
+                ],
+                "summary": "获取杠杆多空比",
+                "parameters": [
+                    {
+                        "name": "ccy",
+                        "in": "query",
+                        "description": "币种，如：`BTC`",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "BTC"
+                    },
+                    {
+                        "name": "begin",
+                        "in": "query",
+                        "description": "开始时间，如：1597026383085",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "end",
+                        "in": "query",
+                        "description": "结束时间，如：1597026383085",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "period",
+                        "in": "query",
+                        "description": "时间粒度，默认值`5m`。支持[5m/1H/1D]<br>`5m`粒度最多只能查询两天之内的数据<br>`1H`粒度最多只能查询30天之内的数据<br>`1D`粒度最多只能查询180天之内的数据",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "example": {
+                                        "code": "0",
+                                        "data": [
+                                            [
+                                                "1630492800000",
+                                                "0.4614"
+                                            ],
+                                            [
+                                                "1630492500000",
+                                                "0.5767"
+                                            ]
+                                        ],
+                                        "msg": ""
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v5/rubik/stat/contracts/long-short-account-ratio": {
+            "get": {
+                "tags": [
+                    "Trading Data"
+                ],
+                "summary": "获取多空持仓人数比",
+                "parameters": [
+                    {
+                        "name": "ccy",
+                        "in": "query",
+                        "description": "币种，如：`BTC`",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "BTC"
+                    },
+                    {
+                        "name": "begin",
+                        "in": "query",
+                        "description": "开始时间，如：1597026383085",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "end",
+                        "in": "query",
+                        "description": "结束时间，如：1597026383085",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "period",
+                        "in": "query",
+                        "description": "时间粒度，默认值`5m`。支持[5m/1H/1D]<br>`5m`粒度最多只能查询两天之内的数据<br>`1H`粒度最多只能查询30天之内的数据<br>`1D`粒度最多只能查询180天之内的数据",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "example": {
+                                        "code": "0",
+                                        "data": [
+                                            [
+                                                "1630502100000",
+                                                "1.25"
+                                            ]
+                                        ],
+                                        "msg": ""
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v5/rubik/stat/contracts/open-interest-volume": {
+            "get": {
+                "tags": [
+                    "Trading Data"
+                ],
+                "summary": "获取持仓总量及交易量",
+                "parameters": [
+                    {
+                        "name": "ccy",
+                        "in": "query",
+                        "description": "币种，如：`BTC`",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "BTC"
+                    },
+                    {
+                        "name": "begin",
+                        "in": "query",
+                        "description": "开始时间，如：1597026383085",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "end",
+                        "in": "query",
+                        "description": "结束时间，如：1597026383085",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "period",
+                        "in": "query",
+                        "description": "时间粒度，默认值`5m`。支持[5m/1H/1D]<br>`5m`粒度最多只能查询两天之内的数据<br>`1H`粒度最多只能查询30天之内的数据<br>`1D`粒度最多只能查询180天之内的数据",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "example": {
+                                        "code": "0",
+                                        "data": [
+                                            [
+                                                "1630502400000",
+                                                "1713028741.6898",
+                                                "39800873.554"
+                                            ]
+                                        ],
+                                        "msg": ""
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v5/rubik/stat/option/open-interest-volume": {
+            "get": {
+                "tags": [
+                    "Trading Data"
+                ],
+                "summary": "获取持仓总量及交易量",
+                "parameters": [
+                    {
+                        "name": "ccy",
+                        "in": "query",
+                        "description": "币种，如：`BTC`",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "BTC"
+                    },
+                    {
+                        "name": "period",
+                        "in": "query",
+                        "description": "时间粒度，默认值`8H`。支持[8H/1D]<br>每个粒度最多只能查询72条数据",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "example": {
+                                        "code": "0",
+                                        "data": [
+                                            [
+                                                "1630368000000",
+                                                "3458.1000",
+                                                "78.8000"
+                                            ]
+                                        ],
+                                        "msg": ""
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v5/rubik/stat/option/open-interest-volume-ratio": {
+            "get": {
+                "tags": [
+                    "Trading Data"
+                ],
+                "summary": "看涨（跌）期权合约持仓总量比/交易总量比",
+                "parameters": [
+                    {
+                        "name": "ccy",
+                        "in": "query",
+                        "description": "币种，如：`BTC`",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "BTC"
+                    },
+                    {
+                        "name": "period",
+                        "in": "query",
+                        "description": "时间粒度，默认值`8H`。支持[8H/1D]<br>每个粒度最多只能查询72条数据",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "example": {
+                                        "code": "0",
+                                        "data": [
+                                            [
+                                                "1630512000000",
+                                                "2.7261",
+                                                "2.3447"
+                                            ],
+                                            [
+                                                "1630425600000",
+                                                "2.8101",
+                                                "2.3438"
+                                            ]
+                                        ],
+                                        "msg": ""
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v5/rubik/stat/option/open-interest-volume-expiry": {
+            "get": {
+                "tags": [
+                    "Trading Data"
+                ],
+                "summary": "看涨看跌持仓总量及交易总量（按到期日分）",
+                "parameters": [
+                    {
+                        "name": "ccy",
+                        "in": "query",
+                        "description": "币种，如：`BTC`",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "BTC"
+                    },
+                    {
+                        "name": "period",
+                        "in": "query",
+                        "description": "时间粒度，默认值`8H`。支持[8H/1D]<br>每个粒度最多只能查询72条数据",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "example": {
+                                        "code": "0",
+                                        "data": [
+                                            [
+                                                "1630540800000",
+                                                "20210902",
+                                                "6.4",
+                                                "18.4",
+                                                "0.7",
+                                                "0.4"
+                                            ],
+                                            [
+                                                "1630540800000",
+                                                "20210903",
+                                                "47",
+                                                "36.6",
+                                                "1",
+                                                "10.7"
+                                            ]
+                                        ],
+                                        "msg": ""
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v5/rubik/stat/option/open-interest-volume-strike": {
+            "get": {
+                "tags": [
+                    "Trading Data"
+                ],
+                "summary": "看涨看跌持仓总量及交易总量（按执行价格分）",
+                "parameters": [
+                    {
+                        "name": "ccy",
+                        "in": "query",
+                        "description": "币种，如：`BTC`",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "BTC"
+                    },
+                    {
+                        "name": "expTime",
+                        "in": "query",
+                        "description": "到期日（格式: YYYYMMdd，例如：`20210623`）",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "20210623"
+                    },
+                    {
+                        "name": "period",
+                        "in": "query",
+                        "description": "时间粒度，默认值`8H`。支持[8H/1D]<br>每个粒度最多只能查询72条数据",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "example": {
+                                        "code": "0",
+                                        "data": [
+                                            [
+                                                "1630540800000",
+                                                "10000",
+                                                "0",
+                                                "0.5",
+                                                "0",
+                                                "0"
+                                            ],
+                                            [
+                                                "1630540800000",
+                                                "14000",
+                                                "0",
+                                                "5.2",
+                                                "0",
+                                                "0"
+                                            ]
+                                        ],
+                                        "msg": ""
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v5/rubik/stat/option/taker-block-volume": {
+            "get": {
+                "tags": [
+                    "Trading Data"
+                ],
+                "summary": "看涨（跌）期权合约主动买入/卖出量",
+                "parameters": [
+                    {
+                        "name": "ccy",
+                        "in": "query",
+                        "description": "币种，如：`BTC`",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "BTC"
+                    },
+                    {
+                        "name": "period",
+                        "in": "query",
+                        "description": "时间粒度，默认值`8H`。支持[8H/1D]<br>每个粒度最多只能查询72条数据",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "example": {
+                                        "code": "0",
+                                        "data": [
+                                            "1630512000000",
+                                            "8.55",
+                                            "67.3",
+                                            "16.05",
+                                            "16.3",
+                                            "126.4",
+                                            "40.7"
+                                        ],
+                                        "msg": ""
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "components": {}
+}

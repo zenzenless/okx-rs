@@ -1,0 +1,2 @@
+pub mod _api_v5_asset_transfer_post_request;
+pub use self::_api_v5_asset_transfer_post_request::ApiV5AssetTransferPostRequest;
