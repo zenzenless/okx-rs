@@ -189,7 +189,7 @@ pub async fn api_v5_account_account_position_risk_get(configuration: &configurat
     } else {
         let local_var_content = local_var_resp.text().await?;
         let local_var_entity: Option<ApiV5AccountAccountPositionRiskGetError> = serde_json::from_str(&local_var_content).ok();
-        let local_var_error = ResponseContent { status: local_var_status, content: local_var_content, entity: local_var_entity };
+        let local_var_error: ResponseContent<ApiV5AccountAccountPositionRiskGetError> = ResponseContent { status: local_var_status, content: local_var_content, entity: local_var_entity };
         Err(Error::ResponseError(local_var_error))
     }
 }
