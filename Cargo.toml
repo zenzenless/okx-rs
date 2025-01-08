@@ -8,4 +8,5 @@ members = [
     "public",
     "trade",
     "trading_data",
+    "query"
 ]

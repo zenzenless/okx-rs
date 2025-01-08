@@ -36,8 +36,18 @@ pub struct ApiKey {
 }
 
 impl Configuration {
-    pub fn new() -> Configuration {
-        Configuration::default()
+   pub fn new(base_path:impl Into<String>,api_key:impl Into<String>,secret_key:impl Into<String>,passphrase :impl Into<String>)->Self{
+        return Configuration{
+            base_path:base_path.into(),
+            user_agent: Some("OpenAPI-Generator/v5/rust".to_owned()),
+            client: CustomClient {
+                client: reqwest::Client::new(),
+                api_key:api_key.into(),
+                secret_key:secret_key.into(),
+                passphrase:passphrase.into(),
+            },
+            ..Default::default()
+        }
     }
 }
 
@@ -58,6 +68,7 @@ impl Default for Configuration {
             api_key: None,
         }
     }
+   
 }
 #[derive(Debug, Clone)]
 pub struct CustomClient {
