@@ -46,7 +46,10 @@ impl Configuration {
                 secret_key:secret_key.into(),
                 passphrase:passphrase.into(),
             },
-            ..Default::default()
+            basic_auth: None,
+            oauth_access_token: None,
+            bearer_access_token: None,
+            api_key: None,
         }
     }
 }

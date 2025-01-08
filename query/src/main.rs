@@ -1,3 +1,4 @@
+use account::apis::account_api;
 use clap::Parser;
 
 
@@ -20,15 +21,18 @@ enum Commands {
         secretkey: String,
     },
 }
-
-fn main() {
+#[tokio::main]
+async fn main() {
     let cli = Cli::parse();
 
     match &cli.command {
         Commands::Account { apikey, passphrase, secretkey } => {
             
-           let conf= account::apis::configuration::Configuration::new("".to_string(), apikey, secretkey, passphrase);
+            //TODO: set base
+           let conf= account::apis::configuration::Configuration::new("https://aws.okx.com", apikey, secretkey, passphrase);
+            let res=account_api::api_v5_account_balance_get(&conf, None).await;
             // Execute account query logic here
+            println!("Account Query Result: {:?}", res);
         }
     }
 }
