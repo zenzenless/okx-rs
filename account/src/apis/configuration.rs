@@ -94,7 +94,7 @@ impl CustomClient {
             "{}{}{}",
             timestamp,
             request.method().as_str(),
-            request.url().as_str()
+            request.url().path()
         );
         let body_string = match request.body() {
             Some(bytes) => String::from_utf8(bytes.as_bytes().unwrap_or("".as_bytes()).to_vec())
