@@ -10,3 +10,5 @@ pub mod _api_v5_account_set_position_mode_post_request;
 pub use self::_api_v5_account_set_position_mode_post_request::ApiV5AccountSetPositionModePostRequest;
 pub mod _api_v5_account_simulated_margin_post_request;
 pub use self::_api_v5_account_simulated_margin_post_request::ApiV5AccountSimulatedMarginPostRequest;
+pub mod _api_v5_account_balance_response;
+pub use self::_api_v5_account_balance_response::BalanceResponse;

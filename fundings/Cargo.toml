@@ -14,3 +14,7 @@ serde_repr = "^0.1"
 url = "^2.5"
 uuid = { version = "^1.8", features = ["serde", "v4"] }
 reqwest = { version = "^0.12", features = ["json", "multipart"] }
+chrono ="0.4.39"
+base64 = "0.22.1"
+sha2 = "0.10.8"
+hmac = "0.12.1"
