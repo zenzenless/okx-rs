@@ -37,8 +37,13 @@ pub struct ApiKey {
 
 
 impl Configuration {
-    pub fn new() -> Configuration {
-        Configuration::default()
+    pub fn new(base_path:impl Into<String>,api_key:impl Into<String>,secret_key:impl Into<String>,passphrase :impl Into<String>) -> Configuration {
+        let mut c=Configuration::default();
+        c.client.api_key=api_key.into();
+        c.client.secret_key=secret_key.into();
+        c.client.passphrase=passphrase.into();
+        c.base_path=base_path.into();
+        c
     }
 }
 
