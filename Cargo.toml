@@ -9,4 +9,4 @@ members = [
     "trade",
     "trading_data",
     "query"
-]
+, "finance"]

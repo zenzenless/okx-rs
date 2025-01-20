@@ -1,6 +1,8 @@
-use account::apis::account_api;
+use ::account::apis::configuration::ApiKey;
+use account::{query_account_asset, query_finance_balance, query_trade_account_asset};
 use clap::Parser;
-
+use fundings::apis::fundings_api;
+mod account;
 #[derive(Parser, Debug)]
 #[clap(
     name = "query",
@@ -34,38 +36,9 @@ fn main() {
             passphrase,
             secretkey,
         } => {
-            let conf = account::apis::configuration::Configuration::new(
-                "https://aws.okx.com",
-                apikey,
-                secretkey,
-                passphrase,
-            );
-            let mut rt = tokio::runtime::Runtime::new().unwrap();
-            let res =
-                rt.block_on(async { account_api::api_v5_account_balance_get(&conf, None).await });
-            // Execute account query logic here
-            match res {
-                Ok(response) => {
-                    println!("API call successful!");
-
-                    let res = serde_json::from_value::<account::models::BalanceResponse>(response)
-                        .unwrap();
-                    let mut count=0.0;
-                    for v in res.data.iter() {
-                        for vv in &v.details{
-                            println!("{:?}",vv);
-                            let num:f64=vv.eq_usd.parse().unwrap_or(0.0);
-                            count+=num;
-
-                        }
-                    }
-                    println!("total {}",count);
-                }
-                Err(e) => {
-                    println!("API call failed!");
-                    println!("Error fetching account balance: {:?}", e);
-                }
-            }
+            query_account_asset(apikey, passphrase, secretkey);
+            query_trade_account_asset(apikey, passphrase, secretkey);
+            query_finance_balance(apikey, passphrase, secretkey);
         }
     }
 }

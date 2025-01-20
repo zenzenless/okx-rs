@@ -8,5 +8,7 @@ edition = "2021"
 [dependencies]
 clap = { version = "4.5.24", features = ["derive","env"] }
 account = { path = "../account" }
+fundings = {path="../fundings"}
 tokio = {version = "1.43.0",features = ["full"]}
 serde_json = "1.0.135"
+finance = {path="../finance"}
