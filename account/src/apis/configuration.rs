@@ -15,7 +15,6 @@ use reqwest::{Request, Response};
 use sha2::Sha256;
 use std::future::Future;
 use std::ops::Deref;
-
 #[derive(Debug, Clone)]
 pub struct Configuration {
     pub base_path: String,
@@ -35,8 +34,8 @@ pub struct ApiKey {
     pub key: String,
 }
 
-impl Configuration {
-   pub fn new(base_path:impl Into<String>,api_key:impl Into<String>,secret_key:impl Into<String>,passphrase :impl Into<String>)->Self{
+impl NewConf for Configuration {
+   fn new(base_path:impl Into<String>,api_key:impl Into<String>,secret_key:impl Into<String>,passphrase :impl Into<String>)->Self{
         return Configuration{
             base_path:base_path.into(),
             user_agent: Some("OpenAPI-Generator/v5/rust".to_owned()),
@@ -139,4 +138,43 @@ impl CustomClient {
         let req = self.sign_request(request);
         self.client.execute(req)
     }
+}
+
+
+// pub struct AuthInfo {
+//     pub api_key: String,
+//     pub passphrase: String,
+//     pub secret_key: String,
+// }
+
+pub trait NewConf {
+    fn new(
+        base_path: impl Into<String>,
+        api_key: impl Into<String>,
+        secret_key: impl Into<String>,
+        passphrase: impl Into<String>,
+    ) -> Self;
+
+    // fn from_auth_info(base_path: impl Into<String>, auth_info: &AuthInfo) -> Self;
+}
+impl NewConf for CustomClient
+where
+{
+    fn new(
+        base_path: impl Into<String>,
+        api_key: impl Into<String>,
+        secret_key: impl Into<String>,
+        passphrase: impl Into<String>,
+    ) -> Self {
+        unimplemented!()
+    }
+
+    // fn from_auth_info(base_path: impl Into<String>, auth_info: &AuthInfo) -> Self {
+    //     Self::new(
+    //         base_path,
+    //         auth_info.api_key.clone(),
+    //         auth_info.secret_key.clone(),
+    //         auth_info.passphrase.clone(),
+    //     )
+    // }
 }
