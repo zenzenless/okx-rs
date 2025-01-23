@@ -1,8 +1,9 @@
 use ::account::apis::configuration::ApiKey;
-use account::{query_account_asset, query_finance_balance, query_trade_account_asset};
+use account::{query_funding_asset, query_finance_balance, query_trade_account_asset, AuthInfo};
 use clap::Parser;
 use fundings::apis::fundings_api;
 mod account;
+mod model;
 #[derive(Parser, Debug)]
 #[clap(
     name = "query",
@@ -36,9 +37,11 @@ fn main() {
             passphrase,
             secretkey,
         } => {
-            query_account_asset(apikey, passphrase, secretkey);
-            query_trade_account_asset(apikey, passphrase, secretkey);
-            query_finance_balance(apikey, passphrase, secretkey);
+            let auth=AuthInfo::new(apikey.clone(), passphrase.clone(), secretkey.clone(), "https://aws.okx.com".to_string());
+
+            query_funding_asset(&auth);
+            query_trade_account_asset(&auth);
+            query_finance_balance(&auth);
         }
     }
 }
