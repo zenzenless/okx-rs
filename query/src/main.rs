@@ -41,9 +41,9 @@ fn main() {
         } => {
             let auth=AuthInfo::new(apikey.clone(), passphrase.clone(), secretkey.clone(), "https://aws.okx.com".to_string());
 
-            query_funding_asset(&auth);
-            query_trade_account_asset(&auth);
-            query_finance_balance(&auth);
+            // query_funding_asset(&auth);
+            // query_trade_account_asset(&auth);
+            // query_finance_balance(&auth);
 
             let r=query_free_asset(&auth);
             if let Err(e)=r{

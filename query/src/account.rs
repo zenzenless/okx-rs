@@ -9,7 +9,10 @@ use fundings::apis::fundings_api::{self, ApiV5AssetBalancesGetError};
 use market::apis::market_data_api;
 use public::apis::configuration;
 
-use crate::{gecko, model::{self, CoinPrice, IndexTicker}};
+use crate::{
+    gecko,
+    model::{self, CoinPrice, IndexTicker},
+};
 
 pub struct AuthInfo {
     api_key: String,
@@ -197,8 +200,6 @@ pub fn query_free_asset(auth: &AuthInfo) -> Result<(), anyhow::Error> {
     let trade_asset = get_trade_account_asset(auth)?;
     let finance_asset = get_finance_balance(auth)?;
 
-    let can_query_coins =
-        gecko::get_coins_map().map_err(|e| anyhow::anyhow!("Error fetching coins map: {:?}", e))?;
 
     let mut my_coins = HashMap::new();
     for fa in funding_asset {
@@ -242,22 +243,25 @@ pub fn query_free_asset(auth: &AuthInfo) -> Result<(), anyhow::Error> {
             );
         }
     }
-
+    let mut my_coins=my_coins.into_iter().filter(|(k, v)| v.coin_num > 0.0).collect::<HashMap<_, _>>();
+    let price_map = get_all_coins_price()?;
     //caulate eq_usd
     for (k, v) in my_coins.iter_mut() {
         //get coin price
-        let inst_id=format!("{}-USD",k.to_ascii_uppercase());
-        let price_result = get_coin_price(&inst_id);
-        let price = match price_result {
-            Ok(price) => price,
-            Err(e) => {
-                println!("Error fetching price for {}: {:?}", inst_id, e);
-                continue;
+        let inst_id = format!("{}-USDT", k.to_ascii_uppercase());
+        
+        if let Some(ticker) = price_map.get(&inst_id) {
+            if let Ok(price) = ticker.idx_px.parse::<f64>() {
+                v.eq_usd = v.coin_num * price;
+            } else {
+                println!("Invalid price format for {}", inst_id);
             }
-        };
-        v.eq_usd = v.coin_num * price;
+        } else {
+            println!("No price found for {}", inst_id);
+        }
     }
-    println!("{:?}",my_coins);
+    let my_coins=my_coins.iter().filter(|(k, v)| v.eq_usd > 0.01).collect::<HashMap<_, _>>();
+    println!("{:#?}", my_coins);
     Ok(())
 }
 
@@ -268,26 +272,29 @@ pub struct FreeUsedAsset {
     pub eq_usd: f64,
 }
 
-pub fn get_coin_price(inst_id: &str) -> Result<f64, anyhow::Error> {
+pub fn get_all_coins_price() -> Result<HashMap<String, IndexTicker>, anyhow::Error> {
     let mut conf = market::apis::configuration::Configuration::new();
     conf.base_path = "https://aws.okx.com".to_string();
     let rt = tokio::runtime::Runtime::new().unwrap();
-    let price = market_data_api::api_v5_market_index_tickers_get(
-        &conf,
-        Some(inst_id),
-        None,
-    );
+    let price = market_data_api::api_v5_market_index_tickers_get(&conf, None, Some("USDT"));
     let res = rt.block_on(price)?;
-    //if code !=0
+    
     if res["code"] != "0" {
-        return Err(anyhow::anyhow!("failed to get price for {} msg:{}", inst_id,res["msg"]));
+        return Err(anyhow::anyhow!(
+            "failed to get price msg:{}",
+            res["msg"]
+        ));
     }
-    let data=&res["data"];
-    let p:Vec<IndexTicker> =serde_json::from_value(data.clone())?;
-    match p.first() {
-        Some(p) => Ok(p.idx_px.parse()?),
-        None => Err(anyhow::anyhow!("failed to get price for {}",inst_id)),
-    }
+    
+    let data = &res["data"];
+    let tickers: Vec<IndexTicker> = serde_json::from_value(data.clone())?;
+    
+    let price_map: HashMap<String, IndexTicker> = tickers
+        .into_iter()
+        .map(|t| (t.inst_id.clone(), t))
+        .collect();
+        
+    Ok(price_map)
 }
 
 #[cfg(test)]
@@ -296,7 +303,7 @@ mod tests {
 
     #[test]
     fn test_get_coin_price() {
-        let price = get_coin_price("BTC-USD").unwrap();
-        println!("{} price: {}", "BTC_USD", price);
+        let price = get_all_coins_price().unwrap();
+        println!("{} price: {:#?}", "BTC_USD", price);
     }
 }

@@ -47,10 +47,10 @@ pub struct CoinPrice {
 }
 
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize,Debug)]
 #[serde(rename_all = "camelCase")]
 pub struct IndexTicker {
-  inst_id: String,
+  pub inst_id: String,
 
   pub idx_px: String,
 
