@@ -1,9 +1,11 @@
 use ::account::apis::configuration::ApiKey;
-use account::{query_funding_asset, query_finance_balance, query_trade_account_asset, AuthInfo};
+use account::{query_finance_balance, query_free_asset, query_funding_asset, query_trade_account_asset, AuthInfo};
 use clap::Parser;
 use fundings::apis::fundings_api;
+use gecko::get_coins_map;
 mod account;
 mod model;
+mod gecko;
 #[derive(Parser, Debug)]
 #[clap(
     name = "query",
@@ -42,6 +44,13 @@ fn main() {
             query_funding_asset(&auth);
             query_trade_account_asset(&auth);
             query_finance_balance(&auth);
+
+            let r=query_free_asset(&auth);
+            if let Err(e)=r{
+                println!("query_free_asset error: {}", e);
+                return;
+            }
+            
         }
     }
 }
